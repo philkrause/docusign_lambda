@@ -1,0 +1,43 @@
+service: "docusign-lambda"
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  apiName: docusign-lambda-${self:provider.stage}
+  timeout: 5 
+  memorySize: 128 
+  logRetentionInDays: 14
+  deploymentBucket:
+    name: exzeo-devops 
+  deploymentPrefix: serverless
+
+  vpc: 
+    securityGroupIds:
+      - sg-0dd716434af550823
+    subnetIds:
+      - subnet-020dbe8c6c9c9a741
+      - subnet-00a2ca85d445c4333
+
+
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+functions:
+  mongoLambda:
+    handler: bin/main
+    environment:
+      REGION: ${self:provider.region}
+      MONGO_UN: "wwfrnftd"
+      MONGO_KEY: "1c9c9fff-b735-4b06-a6ba-4355003760e8"
+      MONGO_URL: "https://cloud.mongodb.com/api/atlas/v1.0/orgs/5b5a22949701995cc7b36d5e/events"
+      PAGER_ROUTER: "66f522598a124db194c2c177209ac97f"
+      PROJECT_URL: "https://cloud.mongodb.com/api/atlas/v1.0/groups/5d03b7b4014b76a797212ace/events"
+    events:
+      - schedule: 
+          name: "docusign-lambda"
+          rate: rate(5 minutes)
