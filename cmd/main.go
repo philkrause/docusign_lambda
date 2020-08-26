@@ -87,6 +87,7 @@ func initCredsFromToken() error {
 	} else {
 		DefaultConfig.Credential = credential
 	}
+
 	return nil
 }
 
