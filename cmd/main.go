@@ -8,9 +8,9 @@ import (
 	"io/ioutil"
 	"os"
 
+	"bitbucket.org/exzeo-usa/docusign-lambda/pkg/connect"
 	"github.com/golang/glog"
 	"github.com/jfcote87/esign"
-	"github.com/jfcote87/esign/v2.1/users"
 )
 
 type ProgramFlags struct {
@@ -26,21 +26,21 @@ type Config struct {
 
 type App struct {
 	cfg *Config
-	svc *users.Service
+	svc *connect.Service
 }
 
-func (app *App) List() {
-	tList, err := app.svc.List().Do(context.Background())
+func (app *App) CheckFailure() {
+	resp, err := app.svc.EventsListFailures().Do(context.Background())
 	if err != nil {
 		glog.Fatalf("Errr %s", err)
 	}
-	glog.Infof("Huh %+v", tList)
+	glog.Infof("Huh %+v", resp)
 }
 
 func NewApp(cfg *Config) *App {
 	app := &App{
 		cfg: cfg,
-		svc: users.New(cfg.Credential),
+		svc: connect.New(cfg.Credential),
 	}
 	return app
 }
@@ -57,7 +57,7 @@ func init() {
 	flag.StringVar(&Flags.JWTConfigFile, "docusign.jwt_config_file",
 		getvar("DOCUSIGN_JWT_CONFIG_FILE", "./jwt.json"), "The Docusign jwt config file")
 	flag.StringVar(&Flags.JWTUser, "docusign.jwt_user",
-		getvar("DOCUSIGTN_JWT_USER", "209fcf56-3fb4-4b18-b07b-1f950b30990f"), "The docusign JWT user")
+		getvar("DOCUSIGTN_JWT_USER", "9cc64643-00a1-426c-85d6-df633445fe59"), "The docusign JWT user")
 }
 
 func main() {
@@ -69,7 +69,7 @@ func main() {
 	}
 	glog.Infof("Parsed flags to %+v: %+v", Flags, DefaultConfig)
 	app := NewApp(&DefaultConfig)
-	app.List()
+	app.CheckFailure()
 
 }
 
