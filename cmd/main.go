@@ -38,6 +38,7 @@ func (app *App) CheckFailure() {
 }
 
 func NewApp(cfg *Config) *App {
+
 	app := &App{
 		cfg: cfg,
 		svc: connect.New(cfg.Credential),
@@ -51,13 +52,13 @@ var DefaultConfig Config
 func init() {
 	flag.Set("logtostderr", "true")
 	flag.StringVar(&Flags.AccountID, "docusign.id",
-		getvar("DOCUSIGN_AccountID", ""), "The docusign account id")
+		getvar("DOCUSIGN_AccountID", "65744228"), "The docusign account id")
 	flag.StringVar(&Flags.AccountToken, "docusign.token",
 		getvar("DOCUSIGN_Token", ""), "The docusign token")
 	flag.StringVar(&Flags.JWTConfigFile, "docusign.jwt_config_file",
 		getvar("DOCUSIGN_JWT_CONFIG_FILE", "./jwt.json"), "The Docusign jwt config file")
 	flag.StringVar(&Flags.JWTUser, "docusign.jwt_user",
-		getvar("DOCUSIGTN_JWT_USER", "9cc64643-00a1-426c-85d6-df633445fe59"), "The docusign JWT user")
+		getvar("DOCUSIGTN_JWT_USER", ""), "The docusign JWT user")
 }
 
 func main() {
@@ -92,6 +93,7 @@ func initCredsFromToken() error {
 }
 
 func initCredsFromJWT() error {
+
 	if buffer, err := ioutil.ReadFile(Flags.JWTConfigFile); err != nil {
 		glog.Errorf("%s open: %v", Flags.JWTConfigFile, err)
 		return err

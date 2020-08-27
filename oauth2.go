@@ -277,7 +277,7 @@ func (c *JWTConfig) ExternalAdminConsentURL(redirectURL, authType, state string,
 		return "", fmt.Errorf("at least one scope must be specified")
 	}
 	v := url.Values{
-		"scope":               {"openid"},
+		"scope":               {"extended"},
 		"client_id":           {c.IntegratorKey},
 		"response_type":       {authType},
 		"redirect_uri":        {redirectURL},
@@ -310,9 +310,9 @@ type AdminConsentResponse struct {
 
 func (c *JWTConfig) jwtRefresher(apiUserName string, signer jws.Signer, scopes ...string) func(ctx context.Context, tk *oauth2.Token) (*oauth2.Token, error) {
 	if len(scopes) == 0 {
-		scopes = []string{"signature", "impersonation"}
+		scopes = []string{"signature", "extended"}
 	} else {
-		scopes = addUnique(scopes, "impersonation")
+		scopes = addUnique(scopes, "extended")
 	}
 	cfg := &jwt.Config{
 		Issuer:         c.IntegratorKey,
